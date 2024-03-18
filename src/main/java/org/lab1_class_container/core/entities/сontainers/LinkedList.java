@@ -43,30 +43,36 @@ public class LinkedList {
     }
 
     public void remove(int index) {
-        if (index == 0) {
-            head = head.next;
-            if (head == null) {
-                tail = null;
-            }
-        } else {
-            LinkedListNode current = head;
-            int count = 0;
-
-            while (current != null) {
-                if (count == index - 1) {
-                    if (current.next == tail) {
-                        tail = current;
-                    }
-                    current.next = current.next.next;
-                    break;
+        if(index >= 0 && index <size)
+        {
+            if (index == 0) {
+                head = head.next;
+                if (head == null) {
+                    tail = null;
                 }
+            } else {
+                LinkedListNode current = head;
+                int count = 0;
 
-                count++;
-                current = current.next;
+                while (current != null) {
+                    if (count == index - 1) {
+                        if (current.next == tail) {
+                            tail = current;
+                        }
+                        current.next = current.next.next;
+                        break;
+                    }
+
+                    count++;
+                    current = current.next;
+                }
             }
-        }
 
-        size--;
+            size--;
+        }
+        else{
+            throw new IndexOutOfBoundsException("Index out of bounds");
+        }
     }
 
     public int getSize() {
