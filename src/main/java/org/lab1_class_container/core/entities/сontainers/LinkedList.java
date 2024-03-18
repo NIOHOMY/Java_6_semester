@@ -2,6 +2,9 @@ package org.lab1_class_container.core.entities.сontainers;
 
 import org.lab1_class_container.core.entities.сontainers.nodes.LinkedListNode;
 
+/**
+ * Simple implementation of a singly linked list, LinkedList.
+ */
 public class LinkedList {
     private LinkedListNode head;
     private LinkedListNode tail;
@@ -13,6 +16,11 @@ public class LinkedList {
         this.size = 0;
     }
 
+    /**
+     * Add a new element to the end of the list.
+     *
+     * @param data the data to add to the list
+     */
     public void add(int data) {
         LinkedListNode newNode = new LinkedListNode(data);
 
@@ -27,6 +35,14 @@ public class LinkedList {
         size++;
     }
 
+
+    /**
+     * Get the element at the specified index in the list.
+     *
+     * @param index the index of the element to retrieve
+     * @return the data of the element
+     * @throws IndexOutOfBoundsException if the index is out of bounds
+     */
     public int get(int index) {
         LinkedListNode current = head;
         int count = 0;
@@ -42,6 +58,12 @@ public class LinkedList {
         throw new IndexOutOfBoundsException("Index out of bounds");
     }
 
+    /**
+     * Remove the element at the specified index from the list.
+     *
+     * @param index the index of the element to remove
+     * @throws IndexOutOfBoundsException if the index is out of bounds
+     */
     public void remove(int index) {
         if(index >= 0 && index <size)
         {
@@ -75,6 +97,11 @@ public class LinkedList {
         }
     }
 
+    /**
+     * Get the current size of the list.
+     *
+     * @return the current size of the list
+     */
     public int getSize() {
         return size;
     }
