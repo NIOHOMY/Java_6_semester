@@ -1,7 +1,7 @@
 package org.lab1_class_container;
 
 import org.lab1_class_container.core.entities.сontainers.LinkedList;
-import org.lab1_class_container.core.entities.input.InputReader;
+import org.globalEntities.input.InputReader;
 
 
 public class Main {
