@@ -3,8 +3,12 @@ package org.lab2_expression_calculation.core.entities;
 import java.util.*;
 
 public class ExpressionCalculator {
+    boolean hasOperator=false;
     private final Map<String, Double> variables;
 
+    public Map<String, Double> getVariables() {
+        return variables;
+    }
     public ExpressionCalculator() {
         this.variables = new HashMap<>();
     }
@@ -52,37 +56,80 @@ public class ExpressionCalculator {
             double parseExpression() {
                 double x = parseTerm();
                 for (;;) {
-                    if (eat('+')) x += parseTerm();
-                    else if (eat('-')) x -= parseTerm();
-                    else return x;
+                    if (eat('+')) {
+                        if (hasOperator) {
+                            throw new RuntimeException("Unexpected operator after another operator at position " + pos);
+                        }
+                        hasOperator = true;
+                        x += parseTerm();
+                    } else if (eat('-')) {
+                        if (hasOperator) {
+                            throw new RuntimeException("Unexpected operator after another operator at position " + pos);
+                        }
+                        hasOperator = true;
+                        x -= parseTerm();
+                    } else {
+                        hasOperator = false;
+                        return x;
+                    }
                 }
             }
 
             double parseTerm() {
                 double x = parseFactor();
-                for (;;) {
-                    if (eat('*')) x *= parseFactor();
-                    else if (eat('/')) x /= parseFactor();
-                    else return x;
+                for (; ; ) {
+                    if (eat('*')) {
+                        if (hasOperator) {
+                            throw new RuntimeException("Unexpected operator after another operator at position " + pos);
+                        }
+                        hasOperator = true;
+                        x *= parseFactor();
+                    } else if (eat('/')) {
+                        if (hasOperator) {
+                            throw new RuntimeException("Unexpected operator after another operator at position " + pos);
+                        }
+                        hasOperator = true;
+                        x /= parseFactor();
+                    } else {
+                        hasOperator = false;
+                        return x;
+                    }
                 }
             }
 
             double parseFactor() {
-                if (eat('+')) return parseFactor();
-                if (eat('-')) return -parseFactor();
+                if (eat('+')){
+                    if (hasOperator) {
+                        throw new RuntimeException("Unexpected operator after another operator at position " + pos);
+                    }
+                    hasOperator = true;
+                    return parseFactor();
+                }
+                if (eat('-')){
+                    if (hasOperator) {
+                        throw new RuntimeException("Unexpected operator after another operator at position " + pos);
+                    }
+                    hasOperator = true;
+                    return -parseFactor();
+                }
 
                 double x;
+                boolean prevhasOperator = hasOperator;
                 int startPos = this.pos;
                 if (eat('(')) {
+                    hasOperator = false;
                     x = parseExpression();
-                    eat(')');
+                    if (!eat(')')) throw new RuntimeException("Expected closing parenthesis at position " + pos);
+                    else hasOperator = prevhasOperator;
                 } else if ((ch >= '0' && ch <= '9') || ch == '.') {
                     while ((ch >= '0' && ch <= '9') || ch == '.') nextChar();
                     x = Double.parseDouble(expression.substring(startPos, this.pos));
                 } else if (ch >= 'a' && ch <= 'z') {
                     while (ch >= 'a' && ch <= 'z') nextChar();
                     String func = expression.substring(startPos, this.pos);
-                    x = parseFactor();
+                    if (!eat('(')) throw new RuntimeException("Expected opening parenthesis after function at position " + startPos);
+                    x = parseExpression();
+                    if (!eat(')')) throw new RuntimeException("Expected closing parenthesis after function argument at position " + pos);
                     switch (func) {
                         case "sqrt":
                             x = Math.sqrt(x);
@@ -117,8 +164,11 @@ public class ExpressionCalculator {
 
                 if (eat('^')) x = Math.pow(x, parseFactor());
 
+                hasOperator = false;
                 return x;
+
             }
+
         }.parse();
     }
 }
