@@ -3,7 +3,7 @@ package org.lab2_expression_calculation.core.entities;
 import java.util.*;
 
 public class ExpressionCalculator {
-    private Map<String, Double> variables;
+    private final Map<String, Double> variables;
 
     public ExpressionCalculator() {
         this.variables = new HashMap<>();
@@ -19,6 +19,10 @@ public class ExpressionCalculator {
         }
 
         return evaluate(expression);
+    }
+
+    public String giveExample(){
+        return "sin(x)+cos(x)+tan(y)-asin(x)-ctan(y) + x^3 - y*x / sqrt(y)";
     }
 
     private double evaluate(String expression) {
@@ -79,10 +83,34 @@ public class ExpressionCalculator {
                     while (ch >= 'a' && ch <= 'z') nextChar();
                     String func = expression.substring(startPos, this.pos);
                     x = parseFactor();
-                    if (func.equals("sqrt")) x = Math.sqrt(x);
-                    else if (func.equals("sin")) x = Math.sin(Math.toRadians(x));
-                    else if (func.equals("cos")) x = Math.cos(Math.toRadians(x));
-                    else if (func.equals("tan")) x = Math.tan(Math.toRadians(x));
+                    switch (func) {
+                        case "sqrt":
+                            x = Math.sqrt(x);
+                            break;
+                        case "sin":
+                            x = Math.sin(Math.toRadians(x));
+                            break;
+                        case "cos":
+                            x = Math.cos(Math.toRadians(x));
+                            break;
+                        case "tan":
+                            x = Math.tan(Math.toRadians(x));
+                            break;
+                        case "ctan":
+                            x = 1.0 / Math.tan(Math.toRadians(x));
+                            break;
+                        case "asin":
+                            x = Math.asin(Math.toRadians(x));
+                            break;
+                        case "acos":
+                            x = Math.acos(Math.toRadians(x));
+                            break;
+                        case "atan":
+                            x = Math.atan(Math.toRadians(x));
+                            break;
+                        default:
+                            throw new RuntimeException("Unknown function: " + func);
+                    }
                 } else {
                     throw new RuntimeException("Unexpected: " + (char)ch);
                 }

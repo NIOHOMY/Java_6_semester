@@ -1,12 +1,12 @@
 package org.lab2_expression_calculation;
 
+import org.globalEntities.input.InputReader;
 import org.lab2_expression_calculation.core.entities.ExpressionCalculator;
 
-import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+        InputReader inputReader = new InputReader();
         ExpressionCalculator calculator = new ExpressionCalculator();
 
         while (true) {
@@ -16,22 +16,21 @@ public class Main {
             System.out.println("3. Выйти");
 
             System.out.print("Выберите действие: ");
-            int choice = scanner.nextInt();
-            scanner.nextLine();
+            int choice = inputReader.readIntFromConsole();
 
             switch (choice) {
                 case 1:
                     System.out.print("Введите имя переменной: ");
-                    String variableName = scanner.nextLine();
+                    String variableName = inputReader.readStringFromConsole();
                     System.out.print("Введите значение переменной: ");
-                    double value = scanner.nextDouble();
+                    double value = inputReader.readDoubleFromConsole();
                     calculator.addVariable(variableName, value);
                     System.out.println("Переменная добавлена.");
                     break;
                 case 2:
                     System.out.println("Введите выражение для вычисления: ");
-                    System.out.println("Пример: sin(x) + x - y*x / sqrt(y)");
-                    String expression = scanner.nextLine();
+                    System.out.println("Пример: "+calculator.giveExample());
+                    String expression = inputReader.readStringFromConsole();
                     double result = calculator.evaluateExpression(expression);
                     System.out.println("Результат выражения '" + expression + "': " + result);
                     break;
