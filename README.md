@@ -107,3 +107,83 @@ separator - разделитель. <br/>
 
 ##
 
+<h2 align="center">5</h2>
+
+<h3 align="center">
+ Рефлексия (di)
+</h3>
+
+1. Создать аннотацию @AutoInjectable
+2. Разобраться(поискать в Google) с классом Properties
+3. Создать класс Injector в котором был бы параметризированный метод inject, который принимал бы в  <br/>
+качестве параметра объект любого класса и, используя механизмы рефлексии осуществлял поиск полей, помеченных <br/>
+этой аннотацией(в качестве типа поля используются некоторый интерфейс), и осуществлял бы инициализацию этих полей <br/>
+экземплярами классов, которые указаны в качестве реализации соответствующего интерфейса в некотором файле настроек(properites) <br/>
+
+Пример: <br/>
+У нас есть несколько интерфейсов и несколько классов, реализующих эти интерфейсы: <br/>
+
+```java
+interface SomeInterface{
+  public void doSomething();
+}
+interface SomeOtherInterface{
+  public void doSomeOther();
+}
+class SomeImpl implements SomeInterface{
+  public void doSomething(){ println(“A”);}
+}
+class OtherImpl implements SomeInterface{
+  public void doSomething(){ println(“B”);}
+}
+class SODoer implements SomeOtherInterface{
+  public void doSomething(){ println(“C”);}
+}
+class SomeBean{
+  @AutoInjectable
+  private SomeInterface field1;
+  @AutoInjectable
+  private SomeOtherInterface field2;
+
+  public void foo(){
+    field1.doSomething();
+    field2.doSomething();
+  }
+}
+```
+
+Ваша задача написать класс Injector, который бы осуществлял внедрение зависимостей в любой объект ,  <br/>
+который содержит поля, помеченные нашей аннотацией. Т.е. некоторый метод этого класса, принимал бы произвольный объект, <br/>
+исследовал бы существующие в нем поля, и смотрел, аннотированы ли они нужной аннотацией. <br/>
+Если да, то тогда он бы смотрел тип этого поля и искал бы реализацию в файле properties: <br/>
+
+Пример файла:
+```
+somepackage.SomeInterface=somePackage.SomeImpl
+somepackage.SomeOtherInterface=somepackage.SODoer
+```
+
+После этого, он создавал бы экземпляр нужного класса и записывал ссылку на этот экземпляр в нужное поле.  <br/>
+Т.е. для нашего примера метод inject должен в поле field1 записать экземпляр класса SomeImpl, а в поле field2 класса SODoer. <br/>
+Теперь, инициализация объектов класса SomeBean будет выглядеть следующим образом: <br/>
+
+```java
+SomeBean sb =(new Injector()).inject(new SomeBean());
+sb.foo();
+```
+
+И теперь никаких ошибок быть не должно, а на экран должно вывестись AC <br/>
+Если же мы поменяем в файле properties строчку
+```
+somepackage.SomeInterface=somePackage.SomeImpl
+```
+на
+```
+somepackage.SomeInterface=somePackage.OtherImpl
+```
+Должно вывестись BC
+
+<div align="center">
+  <a href="https://github.com/NIOHOMY/Java_6_semester/tree/master/src/main/java/org/lab5_di_system">Перейти к лабораторной 5</a>
+</div>
+
